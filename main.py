@@ -3,19 +3,34 @@
 # May 8, 2023
 
 from flask import Flask
+from flask import request
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return "Congrats, it's a web app."
+    celsius = request.args.get("celsius", "")
+    if celsius:
+        fahrenheit = fahrenheit_from(celsius)
+    else:
+        fahrenheit = ""
+    return (
+        """<form action="" method="get">
+                <input type="text" name="celsius" />
+                <input type="submit" value="Convert" />
+              </form>"""
+        + "Fahrenheit: "
+        + fahrenheit
+    )
 
-@app.route("/<int:celsius>")
 def fahrenheit_from(celsius):
     """Convert Celsius to Fahrenheit degrees."""
-    fahrenheit = float(celsius) * 9 / 5 + 32
-    fahrenheit = round(fahrenheit, 3)  # Round to three decimal places
-    return str(fahrenheit)
+    try:
+        fahrenheit = float(celsius) * 9 / 5 + 32
+        fahrenheit = round(fahrenheit, 3)  # Round to three decimal places
+        return str(fahrenheit)
+    except ValueError:
+        return "invalid input"
 
 # if __name__ == "__main__":
 #     celsius = input("Celsius: ")
